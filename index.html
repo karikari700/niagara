@@ -1,1 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creación de efectos visuales</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+  <div class="container">
+    <h2>Creación de efectos visuales</h2>
+    
+    se agrega imagen
+    <img class="img-fluid" src="https://dev.epicgames.com/community/api/documentation/image/dc3b3154-8273-4bc9-8fe4-299b194534df?resizing_type=fill&width=1920&height=335" alt="descripción general">
 
+
+  <p>Esta página ofrece una descripción general del sistema de efectos visuales Niagara en Unreal Engine 5.</p>
+
+Descripción general
+
+<p>Niagara es el sistema de efectos visuales de nueva generación de Unreal Engine. Con Niagara, el artista técnico tiene la posibilidad de crear funcionalidades adicionales por sí mismo, sin la ayuda de un programador. El sistema es adaptable y flexible. Los principiantes pueden empezar modificando plantillas o ejemplos de comportamiento, y los usuarios avanzados pueden crear sus propios módulos personalizados.
+</p>
+
+<h2>Componentes básicos de Niagara</h2>
+<p>En el sistema de efectos visuales Niagara hay cuatro componentes básicos:
+</p>
+<ul>
+  <li>Sistemas</li>
+  <li>Emisores</li>
+  <li>Módulos</li>
+  <li>Parámetros</li>
+</ul>
+    
+
+<h3>Sistemas </h3>
+<p> 
+Un sistema Niagara es un contenedor de todo lo que necesitarás para crear ese efecto. Dentro de ese sistema, puedes tener diferentes bloques de construcción que se apilan para ayudarte a producir el efecto global.
+ </p>
+
+Puedes modificar algunos comportamientos a nivel de sistema que luego se aplicarán a todo en ese efecto. 
+
+imagen 01
+
+El panel de la línea de tiempo del editor del sistema muestra qué emisores contiene el sistema, y puede utilizarse para gestionar dichos emisores.
+
+
+Emisores
+
+Los emisores son el lugar donde se generan las partículas en un sistema Niagara. Un emisor controla cómo nacen las partículas, qué ocurre con ellas a medida que pasa el tiempo, qué aspecto tienen y cómo se comportan.
+
+El emisor se organiza en una pila. Dentro de esa pila hay varios grupos, dentro de los cuales se pueden poner módulos que realicen tareas individuales. Los grupos son los siguientes.
+
+imagen 02
+
+1.-Emitter Spawn [generación de emisores]
+
+Este grupo define lo que ocurre cuando se crea por primera vez un emisor en la CPU. Utiliza este grupo para definir las configuraciones iniciales y los valores predeterminados.
+
+2.-Emitter Update [actualización de emisores]
+
+Este grupo define los módulos a nivel de emisor que se producen en cada fotograma en la CPU. Utiliza este grupo para definir la generación de partículas cuando quieras que sigan apareciendo en cada fotograma.
+
+3.-Particle Spawn [generación de partículas]
+
+A este grupo se le llama una vez por partícula cuando la partícula nace. Aquí es donde puedes determinar los detalles de inicialización de las partículas, como el lugar donde nacen, de qué color son, su tamaño, etc.
+
+4.-Particle Update [actualización de partículas]
+
+A este grupo se le llama por partícula en cada fotograma. Aquí puedes definir cualquier cosa que deba cambiar fotograma a fotograma, a medida que las partículas envejecen. Por ejemplo, si el color de las partículas cambia con el tiempo. O si las partículas se ven afectadas por fuerzas como la gravedad, el ruido de curvatura o la atracción hacia puntos. Incluso puedes hacer que las partículas cambien de tamaño con el tiempo.
+
+5.-Controlador de eventos
+
+En el grupo de controlador de eventos podrás crear eventos de generación en uno o varios emisores que definirán determinados datos. Luego puedes crear eventos de escucha en otros emisores para desencadenar un comportamiento que reaccione al evento generado.
+
+6.-Render [renderizado]
+
+El último grupo es el de renderizado. Aquí es donde defines la visualización de la partícula y configuras uno o varios renderizadores para tus partículas. Puedes utilizar un renderizador de malla si quieres definir un modelo 3D como base de tus partículas, sobre el que podrías aplicar un material, o bien, puedes utilizar un renderizador de sprites y definir tus partículas como sprites 2D. Tienes muchos renderizadores diferentes para elegir y probar.
+
+Módulos
+
+Los módulos son los componentes básicos de los efectos de Niagara. Los módulos se añaden a los grupos para formar una pila y se procesan secuencialmente de arriba abajo.
+
+imagen 03
+
+Módulos de emisores
+Piensa en un módulo como un contenedor que sirve hacer algunas operaciones matemáticas. Pasas algunos datos al módulo, luego dentro del módulo haces algunas operaciones matemáticas con esos datos, y luego vuelves a escribir esos datos al final del módulo.
+
+Los módulos se compilan utilizando el lenguaje de sombreado de alto nivel (HLSL), pero también pueden compilarse visualmente en un gráfico utilizando nodos. Puedes crear funciones, incluir entradas o escribir en un mapa de valores o parámetros. Incluso puedes escribir código HLSL en línea, utilizando el nodo CustomHLSL del gráfico.
+
+Haz doble clic en cualquier módulo de un emisor en Niagara para echar un vistazo a las operaciones matemáticas que hay en su interior. Incluso puedes copiar y crear tus propios módulos. Por ejemplo, si haces doble clic en el módulo Add Velocity [añadir velocidad] para echar un vistazo a su interior, podrás inspeccionar el flujo de datos.
+
+imagen 04
+
+Añadir módulo de velocidad
+Haz clic en la imagen para verla a tamaño completo.
+
+El script comienza recuperando entradas: la entrada de velocidad y el espacio de coordenadas. A continuación, obtiene la velocidad actual de las partículas, así como un factor de escala introducido. Luego, la velocidad de entrada se escala, se transforma en el espacio de coordenadas correcto y se añade a la velocidad actual de las partículas. Una vez completada esa tarea, la nueva velocidad de la partícula se vuelve a escribir para que cualquier módulo que necesite información sobre la velocidad más adelante en la pila pueda recuperarla.
+
+Todos los módulos se compilan con esa metodología básica, aunque para algunos la matemática interna puede que sea más compleja.
+
+Parámetros y tipos de parámetros
+Los parámetros son una abstracción de datos en una simulación de Niagara. Los tipos de parámetros se asignan a un parámetro para definir los datos que ese parámetro representa. Hay cuatro tipos de parámetros:
+
+Primitive [primitivos]: Este tipo de parámetro define datos numéricos de precisión y anchura de canal variables.
+
+Enum [enumeradores]: Este tipo de parámetro define un conjunto fijo de valores con nombre, y asume uno de los valores con nombre.
+
+Struct [estructuras]: Este tipo de parámetro define un conjunto combinado de los tipos primitivos y enumeradores.
+
+Data Interface [interfaces de datos]: Este tipo de parámetro define funciones que proporcionan datos de fuentes de datos externas. Pueden ser datos de otras partes de UE4, o de una aplicación externa.
+
+imagen 05
+
+Parámetros
+Puedes añadir un módulo de parámetros personalizado a un emisor haciendo clic en el icono del signo más (+) y seleccionando Set new or existing parameter directly [configurar parámetro nuevo o existente directamente]. De esta manera añadirás un módulo Set Parameter [establecer parámetro] a la pila. Haz clic en el icono del signo más (+) del módulo Set Parameter y selecciona Add Parameter para establecer un parámetro existente, o Create New Parameter para establecer un parámetro nuevo.
+
+Plantillas, asistentes y ejemplos de comportamiento
+
+Cuando creas por primera vez un emisor Niagara o un sistema Niagara, aparece un cuadro de diálogo que te ofrece varias opciones sobre el tipo de emisor o sistema que quieres crear.
+
+Puedes cambiar cualquiera de los parámetros de la plantilla y añadir, modificar o eliminar cualquiera de los módulos. En una plantilla de sistema, también puedes añadir, modificar o eliminar cualquiera de los emisores. Las plantillas solo están ahí para poner en marcha tu creatividad y darte algo con lo que puedas trabajar inmediatamente.
+
+Asistente del sistema
+
+Para crear un nuevo sistema Niagara, haz clic con el botón derecho en el explorador de contenido y ubica FX > Niagara System.
+
+imagen 06
+
+Crear el sistema Niágara
+Haz clic en la imagen para verla a tamaño completo.
+
+El asistente del sistema ofrece las siguientes opciones para crear un nuevo sistema:
+
+New system from selected emitters [Nuevo sistema de emisores seleccionados]: Si seleccionas esta opción y haces clic en Next, aparecerá una lista de los emisores disponibles. Esta lista incluye tanto los emisores existentes en tu proyecto como los emisores de plantilla. Selecciona los emisores que quieras incluir en el nuevo sistema y haz clic en el icono verde con el signo más (+) para añadirlos. Luego haz clic en Finish para crear el sistema. Si eliges un emisor existente, el sistema heredará de esos emisores. Si eliges un emisor de plantilla, el sistema no tendrá herencias. Además, el emisor de plantilla es una instancia que puede ser estrictamente local de ese sistema, o puedes guardarla como un recurso de emisor independiente.
+
+imagen 07
+
+Nuevo sistema de emisores seleccionados
+Haz clic en la imagen para verla a tamaño completo.
+
+New system from a template or behavior example [nuevo sistema a partir de una plantilla o ejemplo de comportamiento]: Si seleccionas esta opción y haces clic en Next, podrás elegir entre una lista de plantillas o ejemplos de comportamiento que representan varios sistemas de efectos que se utilizan habitualmente. Al igual que con las plantillas de emisores, esta lista puede estar confeccionada por jefes de arte o directores creativos. Si acabas de empezar con UE, esta opción te dará un ejemplo de cómo se crean los sistemas FX en Niagara. Los ejemplos de comportamiento son ejemplos sencillos diseñados para presentar un aspecto aislado del sistema Niagara que puedes examinar para ayudar a desmitificar ese comportamiento.
+
+imagen 08
+
+Nuevo sistema de la plantilla
+Haz clic en la imagen para verla a tamaño completo.
+
+Copy existing system [copiar el sistema existente]: Si seleccionas esta opción y haces clic en Next, aparecerá una lista de los sistemas existentes. Elige una de ellas para copiarla y haz clic en *Finish.
+
+imagen 09
+
+Copiar el sistema existente
+Haz clic en la imagen para verla a tamaño completo.
+
+Create empty system [crear sistema vacío]: Si seleccionas esta opción, tu sistema no contendrá emisores ni plantillas de emisores. Esta opción resulta útil si quieres crear un sistema totalmente distinto de tus otros sistemas.
+
+imagen 10
+
+Crear un sistema vacío
+Haz clic en la imagen para verla a tamaño completo.
+
+Asistente de emisores
+Para crear un nuevo emisor, haz clic con el botón derecho del ratón en el explorador de contenidos y selecciona FX > Niagara Emitter.
+
+imagen 11
+
+Crear emisor Niagara
+Haz clic en la imagen para verla a tamaño completo.
+
+El asistente de emisores ofrece las siguientes opciones para crear un nuevo emisor:
+
+New emitter from a template [nuevo emisor a partir de una plantilla]: Si seleccionas esta opción, puedes elegir entre una lista de plantillas que presentan varios tipos de efectos que se suelen usar. En un gran estudio de desarrollo, los jefes de arte o los directores creativos pueden encargarse de la lista de plantillas, asegurándose de que las plantillas incorporen los mejores resultados de las empresas. Estas plantillas también son un buen punto de partida si acabas de empezar con UE.
+
+imagen 12
+
+Crear emisor de plantilla
+Haz clic en la imagen para verla a tamaño completo.
+
+Inherit from an existing emitter [heredar de un emisor existente]: Si seleccionas esta opción, puedes crear un nuevo emisor que herede propiedades de un emisor existente. Esta opción hace que el nuevo emisor sea secundario del emisor existente que hayas seleccionado. Si necesitas muchos emisores que tengan ciertas propiedades en común, esta es una buena opción. Puedes hacer cambios en el emisor principal, y todos los emisores secundarios reflejarán esos cambios. Selecciona un emisor principal para utilizar esta opción.
+
+imagen 13
+
+Heredar de un emisor principal
+Haz clic en la imagen para verla a tamaño completo.
+
+Copy existing emitter [Copiar emisor existente]: Si seleccionas esta opción, puedes crear un nuevo emisor que sea una copia de un emisor que ya se ha creado. Esta opción puede resultar útil si necesitas crear varios emisores similares. Haz clic en Next tras seleccionar esta opción, y aparecerá una lista con los emisores disponibles. Luego podrás elegir cuál quieres copiar.
+
+imagen 14
+
+Copiar emisor existente
+Haz clic en la imagen para verla a tamaño completo.
+
+Flujo de trabajo de efectos visuales de Niagara
+
+Crear sistemas
+
+Primero, crea un sistema Niagara en el que puedas añadir uno o varios emisores. A continuación, podrás configurar las propiedades de cada emisor.
+
+Crear o añadir emisores
+
+En el editor Niagara, puedes ajustar tu emisor cambiando las propiedades de los módulos que ya contiene, o añadir nuevos módulos para conseguir el efecto deseado. También puedes copiar emisores y añadir varios emisores a un mismo sistema Niagara. Para ver un ejemplo, consulta el tutorial Sparks.
+
+Crear o añadir módulos
+
+En tu emisor, puedes añadir módulos existentes de Niagara haciendo clic en el icono de más (+) del grupo donde quieras añadir el módulo. Niagara incluye un montón de módulos preexistentes, y en la mayoría de las circunstancias podrás crear tus efectos sin necesidad de hacer ningún diseño de módulo personalizado.
+
+Sin embargo, si quieres crear tus propios módulos, puede ser útil comprender el flujo de los datos de un módulo.
+
+imagen 15
+
+Flujo de datos de un módulo
+Flujo de datos de un módulo. Haz clic en la imagen para verla a tamaño completo.
+
+Los módulos se acumulan en un espacio de nombres temporal, luego se pueden apilar más módulos. Mientras contribuyan al mismo atributo, los módulos se apilarán y acumularán correctamente.
+Al escribir un módulo, tienes muchas funciones a tu disposición:
+Operadores booleanos
+Expresiones matemáticas
+Expresiones trigonométricas
+Funciones personalizadas
+Nodos que facilitan las funciones repetitivas
+Una vez que creas un módulo, cualquier otra persona puede utilizarlo.
+Todos los módulos utilizan HLSL. El flujo lógico es el siguiente:
+
+imagen 16
+
+Flujo lógico HLSL
+Flujo lógico HLSL. Haz clic en la imagen para verla a tamaño completo.
+
+Recuerda que cada módulo, emisor y sistema que creas utiliza recursos. Para conservar recursos y mejorar el rendimiento, echa un vistazo a los módulos que ya vienen incluidos en Niagara para ver si puedes lograr tu objetivo sin crear un módulo nuevo. Las entradas dinámicas pueden resultarte muy útiles para ello.
+
+Paradigmas de Niágara
+
+Herencia
+
+Con una jerarquía plana, es imposible localizar y utilizar eficazmente los recursos que ya tienes en tu biblioteca, lo que hace que la gente vuelva a crear dichos recursos. Al duplicar el trabajo, se reduce la eficacia y se aumentan los costes.
+La herencia jerárquica aumenta las posibilidades de descubrimiento y permite reutilizar de manera eficaz los recursos existentes.
+Todo lo heredado puede anularse mediante un emisor secundario en un sistema.
+Se pueden añadir módulos, o se puede volver al valor principal.
+Lo mismo ocurre con los comportamientos a nivel de emisor, como la generación, el tiempo de vida, los bucles, las ráfagas, etc.
+
+Entradas dinámicas
+
+Las entradas dinámicas se crean del mismo modo que los módulos.
+Las entradas dinámicas ofrecen a los usuarios una extensibilidad infinita para la herencia.
+En lugar de actuar sobre un mapa de parámetros, las entradas dinámicas actúan sobre un tipo de valor.
+La lógica gráfica y los valores orientados al usuario pueden generar cualquier valor.
+Las entradas dinámicas tienen casi la misma potencia que la creación de módulos, pero pueden seleccionarse y soltarse en la pila sin crear realmente nuevos módulos.
+Los módulos existentes pueden modificarse y personalizarse de muchas formas utilizando y encadenando entradas dinámicas; de esta maners se reduce el volumen de los módulos y se mejora el rendimiento.
+
+Microexpresiones
+
+Cualquier valor en línea puede convertirse en un fragmento de expresión HLSL.
+Los usuarios pueden acceder a cualquier variable de la partícula, emisor o sistema, así como a cualquier función HLSL o VM.
+Esto es muy útil para funciones pequeñas y puntuales que no necesitan un módulo nuevo.
+
+Eventos
+
+Los eventos son una forma de comunicación entre elementos (como partículas, emisores y sistemas).
+Los eventos pueden ser cualquier tipo de datos, empaquetados en una carga útil (como una estructura) y enviados. A partir de aquí, cualquier otra cosa puede escuchar el evento y actuar en consecuencia.
+Opciones que puedes utilizar:
+Ejecutar el evento directamente sobre una partícula utilizando Particle.ID.
+Ejecutar el evento en cada partícula de un sistema.
+Establecer partículas para que aparezcan en respuesta al evento y, a continuación, realizar alguna acción sobre esas partículas.
+Los eventos son un nodo especial del gráfico (estructuras). Cómo utilizar el nodo de eventos:
+Nombra el evento.
+Añádele los datos que quieras.
+Añade un controlador de eventos a la pila de emisores.
+Configura las opciones del controlador de eventos.
+Existe una pila de ejecución separada para los eventos.
+Puedes añadir una lógica gráfica elaborada a los controladores de eventos.
+Puedes tener configurado todo un sistema de partículas, con una lógica compleja, y luego tener todo un conjunto separado de comportamientos que se produzcan cuando se active el evento.
+
+Interfaces de datos
+
+Hay un sistema extensible que permite el acceso a datos arbitrarios.
+Los datos arbitrarios incluyen datos de malla, audio, información DDC externa, objetos de código y contenedores de texto.
+Las interfaces de datos pueden escribirse como complementos para obtener una mayor extensibilidad en el futuro.
+Los usuarios pueden obtener cualquier dato asociado a una malla esquelética utilizando una interfaz de datos de malla esquelética.
+
+Houdini
+
+Con Houdini, puedes calcular puntos de división, ubicaciones de generación, posiciones de impacto, velocidad de impacto, normales, etc.
+Luego puedes exportar esos datos desde Houdini a un formato contenedor común (CSV).
+Puedes importar ese CSV a Niagara en tu proyecto de UE4.
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>  
+</body>
+</html>
